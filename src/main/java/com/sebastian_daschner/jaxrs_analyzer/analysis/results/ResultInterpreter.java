@@ -18,10 +18,7 @@ package com.sebastian_daschner.jaxrs_analyzer.analysis.results;
 
 import com.sebastian_daschner.jaxrs_analyzer.model.JavaUtils;
 import com.sebastian_daschner.jaxrs_analyzer.model.elements.HttpResponse;
-import com.sebastian_daschner.jaxrs_analyzer.model.rest.MethodParameter;
-import com.sebastian_daschner.jaxrs_analyzer.model.rest.ResourceMethod;
-import com.sebastian_daschner.jaxrs_analyzer.model.rest.Resources;
-import com.sebastian_daschner.jaxrs_analyzer.model.rest.Response;
+import com.sebastian_daschner.jaxrs_analyzer.model.rest.*;
 import com.sebastian_daschner.jaxrs_analyzer.model.results.ClassResult;
 import com.sebastian_daschner.jaxrs_analyzer.model.results.MethodResult;
 import com.sebastian_daschner.jaxrs_analyzer.utils.StringUtils;
@@ -181,7 +178,8 @@ public class ResultInterpreter {
     }
 
     private void addDefaultResponses(final MethodResult methodResult) {
-        if (methodResult.getResponses().isEmpty()) {
+        if (methodResult.getResponses().isEmpty() &&
+                methodResult.getMethodParameters().stream().noneMatch(p -> p.getParameterType() == ParameterType.SUSPEND)) {
             final HttpResponse httpResponse = new HttpResponse();
             httpResponse.getStatuses().add(javax.ws.rs.core.Response.Status.NO_CONTENT.getStatusCode());
             methodResult.getResponses().add(httpResponse);

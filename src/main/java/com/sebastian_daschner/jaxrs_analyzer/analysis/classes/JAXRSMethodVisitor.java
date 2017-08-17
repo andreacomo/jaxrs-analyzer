@@ -1,11 +1,13 @@
 package com.sebastian_daschner.jaxrs_analyzer.analysis.classes;
 
-import java.util.BitSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
 
+import com.sebastian_daschner.jaxrs_analyzer.model.instructions.Instruction;
+import com.sebastian_daschner.jaxrs_analyzer.model.instructions.InvokeDynamicInstruction;
 import org.objectweb.asm.AnnotationVisitor;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Opcodes;
 
 import com.sebastian_daschner.jaxrs_analyzer.LogProvider;
@@ -98,7 +100,7 @@ class JAXRSMethodVisitor extends ProjectMethodVisitor {
             case Types.DEFAULT_VALUE:
                 return defaultAnnotationVisitor(index);
             case Types.SUSPENDED:
-                LogProvider.debug("Handling of " + annotationDesc + " not yet implemented");
+                return paramAnnotationVisitor(index, ParameterType.SUSPEND);
             case Types.CONTEXT:
                 annotatedParameters.set(index);
             default:
@@ -159,6 +161,22 @@ class JAXRSMethodVisitor extends ProjectMethodVisitor {
             final ClassResult classResult = new ClassResult();
             methodResult.setSubResource(classResult);
         }
+
+        if (hasSuspendParameter() &&
+                hasLambdaWithAsyncResponse()) {
+            // TODO: do something within lambda?
+        }
+
+    }
+
+    private boolean hasLambdaWithAsyncResponse() {
+        return methodResult.getInstructions().stream().anyMatch(i -> i instanceof InvokeDynamicInstruction &&
+                ((InvokeDynamicInstruction) i).getDynamicIdentifier().getParameters().contains("Ljavax/ws/rs/container/AsyncResponse;"));
+    }
+
+    private boolean hasSuspendParameter() {
+        return methodResult.getMethodParameters().stream()
+                .anyMatch(p -> p.getParameterType() == ParameterType.SUSPEND);
     }
 
 }

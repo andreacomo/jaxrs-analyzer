@@ -88,7 +88,7 @@ class JAXRSAnnotatedSuperMethodVisitor extends MethodVisitor {
             case Types.DEFAULT_VALUE:
                 return defaultAnnotationVisitor(index);
             case Types.SUSPENDED:
-                LogProvider.debug("Handling of " + annotationDesc + " not yet implemented");
+                return paramAnnotationVisitor(index, ParameterType.SUSPEND);
             case Types.CONTEXT:
                 annotatedParameters.set(index);
             default:
