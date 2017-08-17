@@ -67,6 +67,7 @@ public class ProjectAnalyzerTest {
 
         classPaths.add(path);
         classUnderTest = new ProjectAnalyzer(classPaths);
+        System.out.println("classPaths: " + classPaths);
     }
 
     @Test

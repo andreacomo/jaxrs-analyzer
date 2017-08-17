@@ -132,8 +132,8 @@ public class JAXRSClassVisitor extends ClassVisitor {
     private static boolean hasJAXRSAnnotations(final Method method) {
         for (final Object annotation : method.getDeclaredAnnotations()) {
             // TODO test both
-            if (Stream.of(RELEVANT_METHOD_ANNOTATIONS).map(a -> JavaUtils.getAnnotation(method, a))
-                    .filter(Objects::nonNull).anyMatch(a -> a.getClass().isAssignableFrom(annotation.getClass())))
+            if (Stream.of(RELEVANT_METHOD_ANNOTATIONS)
+                    .anyMatch(a -> a.isAssignableFrom(annotation.getClass())))
                 return true;
 
             if (isAnnotationPresent(annotation.getClass(), HttpMethod.class))
